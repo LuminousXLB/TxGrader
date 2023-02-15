@@ -1,0 +1,10 @@
+httpx
+keyring
+keyrings.alt
+beautifulsoup4
+pandas
+pycryptodomex
+pydantic
+questionary
+rich
+Flask

@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, shrink-to-fit=no"
+    />
+    <title>Bootstrap demo</title>
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css"
+    />
+  </head>
+
+  <body>
+    <main id="app">
+      <div class="px-4 py-5 my-5 text-center">
+        <h1 class="display-5 fw-bold">{{ user.name }}</h1>
+      </div>
+
+      <div
+        class="container d-flex justify-content-center align-items-center vh-100"
+        v-if="isLoading"
+      >
+        <div class="spinner-grow m-5 text-secondary" role="status">
+          <span class="visually-hidden">Loading...</span>
+        </div>
+        <div class="spinner-grow m-5 text-secondary" role="status">
+          <span class="visually-hidden">Loading...</span>
+        </div>
+        <div class="spinner-grow m-5 text-secondary" role="status">
+          <span class="visually-hidden">Loading...</span>
+        </div>
+        <div class="spinner-grow m-5 text-secondary" role="status">
+          <span class="visually-hidden">Loading...</span>
+        </div>
+      </div>
+      <div class="container" v-else>
+        <div class="accordion" id="accordionCourse">
+          <div class="accordion-item" v-for="course in courses">
+            <h2 class="accordion-header" :id="course.sis_course_id">
+              <button
+                class="accordion-button collapsed"
+                type="button"
+                data-bs-toggle="collapse"
+                :data-bs-target="'#'+course.uuid"
+                aria-expanded="false"
+                :aria-controls="course.uuid"
+              >
+                {{ course.name }}
+              </button>
+            </h2>
+            <div
+              :id="course.uuid"
+              class="accordion-collapse collapse"
+              :aria-labelledby="course.sis_course_id"
+              data-bs-parent="#accordionCourse"
+            >
+              <div class="accordion-body">
+                <div class="list-group">
+                  <button
+                    class="list-group-item btn"
+                    :class="{ 'active': overAssignment == asg.id }"
+                    data-bs-toggle="offcanvas"
+                    data-bs-target="#offcanvasQuestion"
+                    aria-controls="offcanvasQuestion"
+                    v-for="asg in assignments[course.id]"
+                    v-show="asg.published && asg.quiz_id"
+                    @mouseenter="overAssignment = asg.id"
+                    @mouseleave="overAssignment = null"
+                    @click="AssignmentButtonClick(asg)"
+                  >
+                    {{ asg.name }}
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div
+        class="offcanvas offcanvas-end"
+        tabindex="-1"
+        id="offcanvasQuestion"
+        aria-labelledby="offcanvasQuestionLabel"
+      >
+        <div class="offcanvas-header" v-if="selected">
+          <h5 class="offcanvas-title" id="offcanvasQuestionLabel">
+            {{ selected.assignment.name }}
+          </h5>
+          <button
+            type="button"
+            class="btn-close"
+            data-bs-dismiss="offcanvas"
+            aria-label="Close"
+          ></button>
+        </div>
+        <div class="offcanvas-body" v-if="selected">
+          <div v-for="qn in selected.questions">
+            <div
+              v-html="qn.question_text"
+              v-if="qn.question_type == 'text_only_question'"
+            ></div>
+
+            <div class="card" v-else>
+              <div
+                class="card-header d-flex justify-content-between align-items-center"
+              >
+                {{ qn.question_name }}
+
+                <a
+                  :href="selectedLink[qn.id]"
+                  class="btn btn-secondary btn-sm"
+                  v-if="qn.question_type == 'essay_question'"
+                  >Go Grading</a
+                >
+              </div>
+              <div class="card-body">
+                <!-- <h5 class="card-title">Special title treatment</h5> -->
+
+                <div class="card-text" v-html="qn.question_text"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/axios@1.3.3/dist/axios.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue@3.2.47/dist/vue.global.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+      const { createApp } = Vue;
+
+      var app = createApp({
+        data() {
+          return {
+            isLoading: false,
+            user: {},
+            courses: [],
+            assignments: {},
+            selected: null,
+            overAssignment: null,
+          };
+        },
+        computed: {
+          selectedLink() {
+            const course_id = this.selected.assignment.course_id;
+            const assignment_id = this.selected.assignment.id;
+            const quiz_id = this.selected.assignment.quiz_id;
+
+            let res = {};
+            for (const qn of this.selected.questions) {
+              const question_id = qn.id;
+              const question_group_id = qn.quiz_group_id;
+              let params = new URLSearchParams({
+                course_id,
+                assignment_id,
+                quiz_id,
+              });
+
+              if (question_group_id) {
+                params.append("question_group_id", qn.quiz_group_id);
+              } else {
+                params.append("question_id", qn.id);
+              }
+              res[qn.id] = `/question?${params.toString()}`;
+            }
+
+            return res;
+          },
+        },
+        methods: {
+          AssignmentButtonClick(asg) {
+            const course_id = asg.course_id;
+            const quiz_id = asg.quiz_id;
+
+            axios
+              .get("/api/list_quiz_questions", {
+                params: { course_id, quiz_id },
+              })
+              .then((res) => {
+                this.selected = {
+                  assignment: asg,
+                  questions: res.data.sort((a, b) => a.position - b.position),
+                };
+              });
+            // list_questions
+          },
+        },
+        mounted() {
+          axios
+            .get("/api/get_user_profile", { params: { user_id: "self" } })
+            .then((res) => {
+              this.user = res.data;
+            });
+
+          axios.get("/api/list_courses").then((res) => {
+            this.courses = res.data;
+            for (let course of this.courses) {
+              axios
+                .get("/api/list_assignments", {
+                  params: { course_id: course.id },
+                })
+                .then((res) => {
+                  this.assignments[course.id] = res.data;
+                });
+            }
+          });
+        },
+      }).mount("#app");
+    </script>
+
+    <script>
+      /*
+
+      */
+    </script>
+  </body>
+</html>
