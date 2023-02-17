@@ -90,7 +90,7 @@ def update_student_question_scores_and_comments():
                     "questions": {
                         str(qn["question_id"]): {
                             "score": qn["score"],
-                            "comment": qn["comment"],
+                            "comment": qn.get("comment"),
                         }
                         for qn in questions
                     },
