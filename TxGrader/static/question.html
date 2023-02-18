@@ -119,34 +119,34 @@
               ></div>
               <div class="card-footer mt-auto">
                 <form id="form-grading" @submit.prevent="SubmitForm">
-                  <div>
-                    <label for="FormPoints">Points</label>
-                    <div class="input-group">
+                  <div class="input-group">
+                    <div class="form-floating">
                       <input
                         type="number"
                         step="0.01"
                         class="form-control"
-                        id="FormPoints"
+                        id="form-item-score"
                         v-model="selPoints"
                         min="0"
                         :max="this.question.points_possible"
                         aria-describedby="basic-addon2"
                       />
-                      <div class="input-group-append">
-                        <span class="input-group-text" id="basic-addon2">
-                          / {{ this.question.points_possible }}
-                        </span>
-                      </div>
+                      <label for="form-item-score">Score</label>
+                    </div>
+                    <div class="input-group-append">
+                      <span class="input-group-text" id="basic-addon2">
+                        / {{ this.question.points_possible }}
+                      </span>
                     </div>
                   </div>
-                  <div>
-                    <label for="FormComment">Comment</label>
+                  <div class="form-floating">
                     <textarea
                       class="form-control"
-                      id="FormComment"
+                      id="form-item-comment"
                       rows="3"
                       v-model="selComment"
                     ></textarea>
+                    <label for="form-item-comment">Comment</label>
                   </div>
                   <div class="float-end mt-3">
                     <button type="submit" class="btn btn-secondary">
