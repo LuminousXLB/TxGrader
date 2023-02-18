@@ -1,7 +1,6 @@
 from io import BytesIO
-from urllib.parse import urlparse, urlsplit
 
-from flask import Blueprint, jsonify, request, send_file
+from flask import Blueprint, request, send_file
 
 from .canvas import http
 
@@ -11,7 +10,12 @@ bp = Blueprint("passthrough", __name__, url_prefix="/")
 def _passthrough():
     url = request.url.replace(request.root_url, "")
     resp = http.get(url)
-    return send_file(BytesIO(resp.content), mimetype=resp.headers["Content-Type"])
+    return (
+        send_file(
+            BytesIO(resp.content), mimetype=resp.headers["Content-Type"], max_age=600
+        ),
+        resp.status_code,
+    )
 
 
 @bp.route("/users/<int:user_id>/files/<int:file_id>/preview", methods=("GET",))
