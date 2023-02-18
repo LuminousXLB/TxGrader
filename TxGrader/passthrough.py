@@ -18,6 +18,11 @@ def _passthrough():
     )
 
 
+@bp.route("/dist/javascripts/translations/<string:filename>", methods=("GET",))
+def translations(filename):
+    return _passthrough()
+
+
 @bp.route("/users/<int:user_id>/files/<int:file_id>/preview", methods=("GET",))
 def preview_file(user_id, file_id):
     return _passthrough()
