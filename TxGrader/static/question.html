@@ -58,7 +58,13 @@
                     <th class="text-center" scope="col">ID</th>
                     <th class="text-center" scope="col">Name</th>
                     <th class="text-center" scope="col">Attempt</th>
-                    <th class="text-center" scope="col">Points</th>
+                    <th
+                      class="text-center"
+                      scope="col"
+                      @click="sortKeys.unshift('score')"
+                    >
+                      Score
+                    </th>
                     <th class="text-center" scope="col">SpeedGrader</th>
                   </tr>
                 </thead>
@@ -209,6 +215,7 @@
             messages: [],
             messageTimers: [],
             question: {},
+            sortKeys: ["user_id", "attempt"],
           };
         },
         computed: {
@@ -248,11 +255,14 @@
             }
 
             res.sort((a, b) => {
-              if (a.user_id == b.user_id) {
-                return a.attempt - b.attempt;
-              } else {
-                return a.user_id - b.user_id;
+              for (const key of this.sortKeys) {
+                if (a[key] == b[key]) {
+                  continue;
+                } else {
+                  return a[key] - b[key];
+                }
               }
+              return 0;
             });
 
             return res;
