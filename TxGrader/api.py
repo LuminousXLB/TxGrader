@@ -38,6 +38,15 @@ def list_questions_in_quiz_or_submission():
     return jsonify(resp.json()["quiz_submission_questions"]), resp.status_code
 
 
+@bp.route("/get_single_quiz_question", methods=("GET",))
+def get_single_quiz_question():
+    url = "/api/v1/courses/{course_id}/quizzes/{quiz_id}/questions/{id}".format(
+        **request.args
+    )
+    resp = http.get(url)
+    return resp.text, resp.status_code
+
+
 @bp.route("/list_quiz_submission_questions", methods=("GET",))
 def get_all_quiz_submission_questions():
     url = "/api/v1/quiz_submissions/{quiz_submission_id}/questions".format(

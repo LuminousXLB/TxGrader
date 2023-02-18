@@ -118,13 +118,13 @@
                         id="FormPoints"
                         v-model="selPoints"
                         min="0"
-                        max="2"
+                        :max="this.question.points_possible"
                         aria-describedby="basic-addon2"
                       />
                       <div class="input-group-append">
                         <span class="input-group-text" id="basic-addon2">
-                          / 2</span
-                        >
+                          / {{ this.question.points_possible }}
+                        </span>
                       </div>
                     </div>
                   </div>
@@ -197,6 +197,7 @@
             selComment: "",
             messages: [],
             messageTimers: [],
+            question: {},
           };
         },
         computed: {
@@ -334,6 +335,18 @@
           } else {
             this.meta.question_id = param.get("question_id");
           }
+
+          axios
+            .get("/api/get_single_quiz_question", {
+              params: {
+                course_id: this.meta.course_id,
+                quiz_id: this.meta.quiz_id,
+                id: this.meta.question_id,
+              },
+            })
+            .then((res) => {
+              this.question = res.data;
+            });
         },
         mounted() {
           axios
