@@ -23,6 +23,11 @@ def translations(filename):
     return _passthrough()
 
 
+@bp.route("/users/<int:user_id>/files/<int:file_id>", methods=("GET",))
+def files(user_id, file_id):
+    return _passthrough()
+
+
 @bp.route("/users/<int:user_id>/files/<int:file_id>/preview", methods=("GET",))
 def preview_file(user_id, file_id):
     return _passthrough()
