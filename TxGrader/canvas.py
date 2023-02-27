@@ -27,6 +27,12 @@ class CanvasHttp:
         resp.raise_for_status()
         return resp
 
+    def post(self, url, *, data=None, json=None, params=None):
+        return self._http.request("POST", url, data=data, json=json, params=params)
+
+    def put(self, url, *, data=None, json=None, params=None):
+        return self._http.request("PUT", url, data=data, json=json, params=params)
+
     def paginated(self, url, *, key=None, params=None):
         reg = re.compile('<(?P<url>http\S+)>; rel="(?P<rel>\S+)"')
 
@@ -44,16 +50,6 @@ class CanvasHttp:
                 )
             }
             url = None if link["last"] == link["current"] else link["next"]
-
-    def post(self, url, *, data=None, json=None, params=None):
-        return self._http.request("POST", url, data=data, json=json, params=params)
-
-    def put(self, url, *, data=None, json=None, params=None):
-        return self._http.request("PUT", url, data=data, json=json, params=params)
-
-    def get_single_submission(self, course_id, assignment_id, user_id):
-        url = f"/api/v1/courses/{course_id}/assignments/{assignment_id}/submissions/{user_id}"
-        return self.get(url, params={"include[]": "submission_history"})
 
 
 http = CanvasHttp(base_url="https://canvas.nus.edu.sg/")
