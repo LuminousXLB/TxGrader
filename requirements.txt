@@ -1,9 +1,9 @@
+beautifulsoup4
+Flask
 httpx
 keyring
 keyrings.alt
-beautifulsoup4
-pandas
 pycryptodomex
+python-dotenv
 questionary
 rich
-Flask

@@ -1,3 +1,4 @@
+import os
 import re
 
 import httpx
@@ -52,4 +53,7 @@ class CanvasHttp:
             url = None if link["last"] == link["current"] else link["next"]
 
 
-http = CanvasHttp(base_url="https://canvas.nus.edu.sg/")
+http = CanvasHttp(
+    base_url="https://canvas.nus.edu.sg/",
+    token=os.environ.get("CANVAS_TOKEN"),
+)
