@@ -20,68 +20,77 @@
       #answer-preview video {
         max-width: 100%;
       }
+
+      html,
+      body,
+      main {
+        height: 100%;
+      }
     </style>
   </head>
 
   <body>
     <main id="app">
       <div
-        class="container d-flex justify-content-center align-items-center vh-100"
+        class="container d-flex justify-content-center align-items-center h-100"
         v-if="isLoading"
       >
-        <div class="spinner-grow m-5 text-secondary" role="status">
+        <div class="spinner-grow m-2 text-secondary" role="status">
           <span class="visually-hidden">Loading...</span>
         </div>
-        <div class="spinner-grow m-5 text-secondary" role="status">
+        <div class="spinner-grow m-2 text-secondary" role="status">
           <span class="visually-hidden">Loading...</span>
         </div>
-        <div class="spinner-grow m-5 text-secondary" role="status">
+        <div class="spinner-grow m-2 text-secondary" role="status">
           <span class="visually-hidden">Loading...</span>
         </div>
-        <div class="spinner-grow m-5 text-secondary" role="status">
+        <div class="spinner-grow m-2 text-secondary" role="status">
           <span class="visually-hidden">Loading...</span>
         </div>
       </div>
-      <div class="vh-100" v-else>
-        <div class="d-flex flex-column h-100">
-          <nav class="navbar navbar-expand-lg bg-light">
-            <div class="container-fluid">
-              <button
-                class="navbar-toggler"
-                type="button"
-                data-bs-toggle="offcanvas"
-                data-bs-target="#offcanvasTable"
-                aria-controls="offcanvasTable"
-                aria-expanded="false"
-                aria-label="Toggle navigation"
-              >
-                <span class="navbar-toggler-icon"></span>
-              </button>
-              <span class="align-middle">{{ tableData[selected].name }}</span>
-              <a
-                v-if="tableData[selected].speedgrader"
-                :href="tableData[selected].speedgrader"
-                class="btn btn-link"
-                target="_blank"
-              >
-                <span
-                  class="align-middle badge rounded-pill text-bg-secondary"
-                  style="margin-right: 1rem"
-                  >{{ tableData[selected].attempt }}</span
-                ></a
-              >
-            </div>
-          </nav>
+      <div class="h-100" v-else>
+        <form id="form-grading" class="h-100" @submit.prevent="SubmitForm">
+          <div class="d-flex flex-column h-100">
+            <nav class="navbar navbar-expand-lg bg-light">
+              <div class="container-fluid">
+                <button
+                  class="navbar-toggler"
+                  type="button"
+                  data-bs-toggle="offcanvas"
+                  data-bs-target="#offcanvasTable"
+                  aria-controls="offcanvasTable"
+                  aria-expanded="false"
+                  aria-label="Toggle navigation"
+                >
+                  <span class="navbar-toggler-icon"></span>
+                </button>
+                <span class="align-middle">{{ tableData[selected].name }}</span>
+                <a
+                  v-if="tableData[selected].speedgrader"
+                  :href="tableData[selected].speedgrader"
+                  class="btn btn-link"
+                  target="_blank"
+                >
+                  <span
+                    class="align-middle badge rounded-pill text-bg-secondary"
+                    style="margin-right: 1rem"
+                    >{{ tableData[selected].attempt }}</span
+                  ></a
+                >
+              </div>
+            </nav>
 
-          <!-- Answer -->
-          <div class="container flex-fill overflow-auto">
-            <div>
-              <div id="answer-preview" v-html="tableData[selected].text"></div>
+            <!-- Answer -->
+            <div class="container flex-fill overflow-auto">
+              <div>
+                <div
+                  id="answer-preview"
+                  v-html="tableData[selected].text"
+                ></div>
+              </div>
             </div>
-          </div>
 
-          <!-- Grading Form -->
-          <form id="form-grading" @submit.prevent="SubmitForm">
+            <!-- Grading Form -->
             <div class="input-group">
               <input
                 type="number"
@@ -98,8 +107,9 @@
             </div>
             <div class="form-floating">
               <textarea
-                class="form-control"
+                class="form-control h-100"
                 id="form-item-comment"
+                rows="5"
                 v-model="selComment"
               ></textarea>
               <label for="form-item-comment">Comment</label>
@@ -126,8 +136,8 @@
             <div class="float-end mt-3">
               <button type="submit" class="btn btn-secondary">Submit</button>
             </div> -->
-          </form>
-        </div>
+          </div>
+        </form>
 
         <!-- Offcanvas Table -->
         <div class="offcanvas offcanvas-start" id="offcanvasTable">
