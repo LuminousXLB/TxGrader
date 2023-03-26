@@ -17,6 +17,7 @@ def page_course():
 def page_question():
     return send_from_directory("static", "question.html")
 
+
 @bp.route("/m/question", methods=("GET",))
 def mobile_page_question():
     return send_from_directory("static", "question.m.html")

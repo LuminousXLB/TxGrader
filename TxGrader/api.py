@@ -69,7 +69,32 @@ def list_assignment_submissions_courses():
             "per_page": 50,
         },
     )
+
     return list(iter)
+
+
+@bp.route("/list_assignment_submissions/<int:question_id>", methods=("GET",))
+def list_assignment_submissions_courses_question(question_id):
+    submissions = list_assignment_submissions_courses()
+    return [
+        {
+            "user": submission["user"],
+            "submission_history": [
+                {
+                    "id": history["id"],
+                    "attempt": history["attempt"],
+                    "submission_data": [
+                        qn
+                        for qn in history["submission_data"]
+                        if qn["question_id"] == question_id
+                    ],
+                }
+                for history in submission["submission_history"]
+                if "submission_data" in history
+            ],
+        }
+        for submission in submissions
+    ]
 
 
 @bp.route("/get_single_submission", methods=("GET",))
