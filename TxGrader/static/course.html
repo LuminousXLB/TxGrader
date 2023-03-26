@@ -104,8 +104,15 @@
                 class="card-header d-flex justify-content-between align-items-center"
               >
                 <span>{{ qn.question_name }}</span>
-                <a :href="selectedLink[qn.id]" class="btn btn-secondary btn-sm"
-                  >Go Grading</a
+                <a
+                  :href="selectedLink[qn.id].desktop"
+                  class="btn btn-secondary btn-sm d-none d-md-block"
+                  >Grading (D)</a
+                >
+                <a
+                  :href="selectedLink[qn.id].mobile"
+                  class="btn btn-secondary btn-sm d-lg-none"
+                  >Grading (M)</a
                 >
               </div>
               <div class="card-body">
@@ -157,7 +164,10 @@
               } else {
                 params.append("question_id", qn.id);
               }
-              res[qn.id] = `/question?${params.toString()}`;
+              res[qn.id] = {
+                desktop: `/question?${params.toString()}`,
+                mobile: `/m/question?${params.toString()}`,
+              };
             }
 
             return res;

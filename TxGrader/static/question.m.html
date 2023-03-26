@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, shrink-to-fit=no"
+    />
+    <title>Bootstrap demo</title>
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css"
+    />
+
+    <style>
+      #answer-preview img {
+        max-width: 100%;
+      }
+
+      #answer-preview video {
+        max-width: 100%;
+      }
+    </style>
+  </head>
+
+  <body>
+    <main id="app">
+      <div
+        class="container d-flex justify-content-center align-items-center vh-100"
+        v-if="isLoading"
+      >
+        <div class="spinner-grow m-5 text-secondary" role="status">
+          <span class="visually-hidden">Loading...</span>
+        </div>
+        <div class="spinner-grow m-5 text-secondary" role="status">
+          <span class="visually-hidden">Loading...</span>
+        </div>
+        <div class="spinner-grow m-5 text-secondary" role="status">
+          <span class="visually-hidden">Loading...</span>
+        </div>
+        <div class="spinner-grow m-5 text-secondary" role="status">
+          <span class="visually-hidden">Loading...</span>
+        </div>
+      </div>
+      <div class="vh-100" v-else>
+        <div class="d-flex flex-column h-100">
+          <nav class="navbar navbar-expand-lg bg-light">
+            <div class="container-fluid">
+              <button
+                class="navbar-toggler"
+                type="button"
+                data-bs-toggle="offcanvas"
+                data-bs-target="#offcanvasTable"
+                aria-controls="offcanvasTable"
+                aria-expanded="false"
+                aria-label="Toggle navigation"
+              >
+                <span class="navbar-toggler-icon"></span>
+              </button>
+              <span class="align-middle">{{ tableData[selected].name }}</span>
+              <a
+                v-if="tableData[selected].speedgrader"
+                :href="tableData[selected].speedgrader"
+                class="btn btn-link"
+                target="_blank"
+              >
+                <span
+                  class="align-middle badge rounded-pill text-bg-secondary"
+                  style="margin-right: 1rem"
+                  >{{ tableData[selected].attempt }}</span
+                ></a
+              >
+            </div>
+          </nav>
+
+          <!-- Answer -->
+          <div class="container flex-fill overflow-auto">
+            <div>
+              <div id="answer-preview" v-html="tableData[selected].text"></div>
+            </div>
+          </div>
+
+          <!-- Grading Form -->
+          <form id="form-grading" @submit.prevent="SubmitForm">
+            <div class="input-group">
+              <input
+                type="number"
+                step="0.01"
+                class="form-control"
+                id="form-item-score"
+                v-model="selPoints"
+                min="0"
+                :max="this.question.points_possible"
+              />
+              <span class="input-group-text" id="basic-addon2">
+                / {{ this.question.points_possible }}
+              </span>
+            </div>
+            <div class="form-floating">
+              <textarea
+                class="form-control"
+                id="form-item-comment"
+                v-model="selComment"
+              ></textarea>
+              <label for="form-item-comment">Comment</label>
+            </div>
+
+            <div class="d-flex justify-content-around">
+              <button
+                type="button"
+                class="btn btn-secondary"
+                @click="selectPrev"
+              >
+                <span aria-hidden="true">&laquo;</span>
+              </button>
+              <button type="submit" class="btn btn-secondary">Submit</button>
+              <button
+                type="button"
+                class="btn btn-secondary"
+                @click="selectNext"
+              >
+                <span aria-hidden="true">&raquo;</span>
+              </button>
+            </div>
+            <!--
+            <div class="float-end mt-3">
+              <button type="submit" class="btn btn-secondary">Submit</button>
+            </div> -->
+          </form>
+        </div>
+
+        <!-- Offcanvas Table -->
+        <div class="offcanvas offcanvas-start" id="offcanvasTable">
+          <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="offcanvasTableLabel">
+              Submissions
+            </h5>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="offcanvas"
+              aria-label="Close"
+            ></button>
+          </div>
+          <div class="offcanvas-body">
+            <table class="table">
+              <thead>
+                <tr>
+                  <th class="text-center" scope="col">ID</th>
+                  <th class="text-center" scope="col">Name</th>
+                  <th class="text-center" scope="col">Attempt</th>
+                  <th
+                    class="text-center"
+                    scope="col"
+                    @click="sortKeys.unshift('score')"
+                  >
+                    Score
+                  </th>
+                </tr>
+              </thead>
+              <tbody v-if="tableData.length">
+                <tr
+                  :class="this.selected == idx ? 'table-active': ''"
+                  v-for="(stu, idx) in tableData"
+                  :id="`table-row-${idx}`"
+                  @click="this.selected = idx"
+                >
+                  <td class="align-middle text-center">{{ stu.user_id }}</td>
+                  <td class="align-middle">{{ stu.name }}</td>
+                  <td class="align-middle text-center">{{ stu.attempt }}</td>
+                  <td class="align-middle text-center">{{ stu.score }}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Toast -->
+        <div class="toast-container position-fixed top-0 end-0 p-3">
+          <div
+            class="toast show"
+            role="alert"
+            aria-live="assertive"
+            aria-atomic="true"
+            v-for="msg in messages"
+          >
+            <div class="toast-header">
+              <strong class="me-auto">Response</strong>
+              <small class="text-muted">just now</small>
+              <button
+                type="button"
+                class="btn-close"
+                data-bs-dismiss="toast"
+                aria-label="Close"
+              ></button>
+            </div>
+            <div class="toast-body">{{ msg }}</div>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/axios@1.3.3/dist/axios.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue@3.2.47/dist/vue.global.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+      const { createApp } = Vue;
+
+      var app = createApp({
+        data() {
+          return {
+            isLoading: true,
+            meta: {
+              course_id: null,
+              assignment_id: null,
+              quiz_id: null,
+              question_id: null,
+              question_group_id: null,
+            },
+            rawData: {},
+            selected: 0,
+            selPoints: -1,
+            selComment: "",
+            messages: [],
+            messageTimers: [],
+            question: {},
+            sortKeys: ["user_id", "attempt"],
+          };
+        },
+        computed: {
+          tableData() {
+            let res = [];
+
+            for (const stu of Object.values(this.rawData)) {
+              const name = stu.user.name;
+              const user_id = stu.user.id;
+
+              for (const submission of stu.submission_history) {
+                const quiz_submission_id = submission.id;
+                const attempt = submission.attempt;
+
+                if (!submission.submission_data) {
+                  continue;
+                }
+                const submission_data = submission.submission_data.find(
+                  (ans) => ans.question_id == this.meta.question_id
+                );
+
+                let obj = {
+                  name,
+                  user_id,
+                  attempt,
+                  quiz_submission_id,
+                  question_id: submission_data.question_id,
+                  score: submission_data.points,
+                  comment: submission_data.more_comments,
+                  text: submission_data.text,
+                };
+                if (stu.attempt === attempt) {
+                  obj.speedgrader = `https://canvas.nus.edu.sg/courses/${this.meta.course_id}/gradebook/speed_grader?assignment_id=${this.meta.assignment_id}&student_id=${user_id}`;
+                }
+                res.push(obj);
+              }
+            }
+
+            res.sort((a, b) => {
+              for (const key of this.sortKeys) {
+                if (a[key] == b[key]) {
+                  continue;
+                } else {
+                  return a[key] - b[key];
+                }
+              }
+              return 0;
+            });
+
+            return res;
+          },
+        },
+        watch: {
+          tableData: function (val) {
+            this.selPoints = val[this.selected].score;
+            this.selComment = val[this.selected].comment;
+          },
+          selected: function (val) {
+            const elem = document.getElementById(`table-row-${val}`);
+            if (elem) {
+              this.selPoints = this.tableData[val].score;
+              this.selComment = this.tableData[val].comment;
+              elem.scrollIntoViewIfNeeded(false);
+            }
+          },
+          messages: {
+            handler: function (val) {
+              if (this.messageTimers.length < val.length) {
+                this.messageTimers.push(
+                  setTimeout(() => {
+                    this.messages.shift();
+                    this.messageTimers.shift();
+                  }, 3000)
+                );
+              }
+
+              if (this.messageTimers.length > val.length) {
+                clearTimeout(this.messageTimers.shift());
+              }
+
+              if (val.length > 3) {
+                this.messages.shift();
+              }
+            },
+            deep: true,
+          },
+        },
+        methods: {
+          SubmitForm(e) {
+            const quiz_submission_id =
+              this.tableData[this.selected].quiz_submission_id;
+
+            const attempt = this.tableData[this.selected].attempt;
+            const question_id = this.tableData[this.selected].question_id;
+            const score = this.selPoints;
+            const comment = this.selComment;
+
+            axios
+              .post(
+                "/api/update_scores_and_comments",
+                { attempt, questions: [{ question_id, score, comment }] },
+                {
+                  params: {
+                    course_id: this.meta.course_id,
+                    quiz_id: this.meta.quiz_id,
+                    quiz_submission_id,
+                  },
+                }
+              )
+              .then((res) => {
+                const user_id = res.data.quiz_submissions[0].user_id;
+
+                axios
+                  .get("/api/get_single_submission", {
+                    params: {
+                      course_id: this.meta.course_id,
+                      assignment_id: this.meta.assignment_id,
+                      user_id,
+                      include: ["submission_history", "user"],
+                    },
+                  })
+                  .then((res) => {
+                    this.rawData[user_id] = res.data;
+                    this.messages.push(
+                      `Complete updating ${res.data.user.name}'s score or comment.`
+                    );
+                  });
+              });
+          },
+          selectFirst() {
+            this.selected = 0;
+          },
+          selectLast() {
+            this.selected = this.tableData.length - 1;
+          },
+          selectPrev() {
+            this.selected = Math.max(0, this.selected - 1);
+          },
+          selectNext() {
+            this.selected = Math.min(
+              this.tableData.length - 1,
+              this.selected + 1
+            );
+          },
+        },
+        created() {
+          param = new URLSearchParams(window.location.search);
+          this.meta.course_id = param.get("course_id");
+          this.meta.assignment_id = param.get("assignment_id");
+          this.meta.quiz_id = param.get("quiz_id");
+          if (param.has("question_group_id")) {
+            this.meta.question_group_id = param.get("question_group_id");
+          } else {
+            this.meta.question_id = param.get("question_id");
+          }
+
+          axios
+            .get("/api/get_single_quiz_question", {
+              params: {
+                course_id: this.meta.course_id,
+                quiz_id: this.meta.quiz_id,
+                id: this.meta.question_id,
+              },
+            })
+            .then((res) => {
+              this.question = res.data;
+            });
+        },
+        mounted() {
+          axios
+            .get("/api/list_assignment_submissions", {
+              params: {
+                course_id: this.meta.course_id,
+                assignment_id: this.meta.assignment_id,
+                include: ["user", "submission_history"],
+              },
+            })
+            .then((res) => {
+              this.messages.push("Complete loading submission history.");
+              for (let stu of res.data) {
+                this.rawData[stu.user.id] = stu;
+              }
+              this.isLoading = false;
+            });
+        },
+      }).mount("#app");
+    </script>
+    <script>
+      document.addEventListener("keyup", (e) => {
+        if (e.key === "Enter") {
+          if (e.ctrlKey || (e.target.tagName === "TEXTAREA" && e.shiftKey)) {
+            app.SubmitForm();
+          }
+
+          if (e.shiftKey) {
+            app.selectNext();
+          }
+        }
+
+        if (e.key === "Escape") {
+          app.messages = [];
+        }
+
+        if (e.target.tagName === "TEXTAREA") {
+          return;
+        }
+
+        switch (e.key) {
+          case "h":
+            app.selectFirst();
+            break;
+          case "j":
+            app.selectNext();
+            break;
+          case "k":
+            app.selectPrev();
+            break;
+          case "l":
+            app.selectLast();
+            break;
+        }
+      });
+    </script>
+  </body>
+</html>
