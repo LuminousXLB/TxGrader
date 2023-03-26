@@ -99,27 +99,16 @@
         </div>
         <div class="offcanvas-body" v-if="selected">
           <div v-for="qn in selected.questions">
-            <div
-              v-html="qn.question_text"
-              v-if="qn.question_type == 'text_only_question'"
-            ></div>
-
-            <div class="card" v-else>
+            <div class="card" v-if="qn.question_type == 'essay_question'">
               <div
                 class="card-header d-flex justify-content-between align-items-center"
               >
-                {{ qn.question_name }}
-
-                <a
-                  :href="selectedLink[qn.id]"
-                  class="btn btn-secondary btn-sm"
-                  v-if="qn.question_type == 'essay_question'"
+                <span>{{ qn.question_name }}</span>
+                <a :href="selectedLink[qn.id]" class="btn btn-secondary btn-sm"
                   >Go Grading</a
                 >
               </div>
               <div class="card-body">
-                <!-- <h5 class="card-title">Special title treatment</h5> -->
-
                 <div class="card-text" v-html="qn.question_text"></div>
               </div>
             </div>
