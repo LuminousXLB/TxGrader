@@ -101,6 +101,23 @@
                 v-model="selPoints"
               />
             </div>
+            <div class="container d-flex justify-content-around mb-1">
+              <button
+                type="button"
+                class="btn btn-secondary"
+                @click="selectPrev"
+              >
+                <span aria-hidden="true">&laquo;</span>
+              </button>
+              <button type="submit" class="btn btn-secondary">Submit</button>
+              <button
+                type="button"
+                class="btn btn-secondary"
+                @click="selectNext"
+              >
+                <span aria-hidden="true">&raquo;</span>
+              </button>
+            </div>
             <div class="input-group mb-1">
               <input
                 type="number"
@@ -124,28 +141,6 @@
               ></textarea>
               <label for="form-item-comment">Comment</label>
             </div>
-
-            <div class="d-flex justify-content-around mb-1">
-              <button
-                type="button"
-                class="btn btn-secondary"
-                @click="selectPrev"
-              >
-                <span aria-hidden="true">&laquo;</span>
-              </button>
-              <button type="submit" class="btn btn-secondary">Submit</button>
-              <button
-                type="button"
-                class="btn btn-secondary"
-                @click="selectNext"
-              >
-                <span aria-hidden="true">&raquo;</span>
-              </button>
-            </div>
-            <!--
-            <div class="float-end mt-3">
-              <button type="submit" class="btn btn-secondary">Submit</button>
-            </div> -->
           </div>
         </form>
 
