@@ -78,6 +78,7 @@ def list_assignment_submissions_courses_question(question_id):
     submissions = list_assignment_submissions_courses()
     return [
         {
+            "attempt": submission["attempt"],
             "user": submission["user"],
             "submission_history": [
                 {

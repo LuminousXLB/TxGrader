@@ -52,7 +52,7 @@
         <form id="form-grading" class="h-100" @submit.prevent="SubmitForm">
           <div class="d-flex flex-column h-100">
             <nav class="navbar navbar-expand-lg bg-light">
-              <div class="container-fluid">
+              <div class="container-fluid d-flex justify-content-between">
                 <button
                   class="navbar-toggler"
                   type="button"
@@ -64,19 +64,24 @@
                 >
                   <span class="navbar-toggler-icon"></span>
                 </button>
-                <span class="align-middle">{{ tableData[selected].name }}</span>
-                <a
-                  v-if="tableData[selected].speedgrader"
-                  :href="tableData[selected].speedgrader"
-                  class="btn btn-link"
-                  target="_blank"
+
+                <div>
+                  <a
+                    v-if="tableData[selected].speedgrader"
+                    :href="tableData[selected].speedgrader"
+                    target="_blank"
+                  >
+                    {{ tableData[selected].name }}
+                  </a>
+                  <span v-else>{{ tableData[selected].name }}</span>
+                </div>
+
+                <div
+                  class="badge rounded-pill text-bg-secondary d-flex align-items-center justify-content-center"
+                  style="height: 2rem; width: 2rem"
                 >
-                  <span
-                    class="align-middle badge rounded-pill text-bg-secondary"
-                    style="margin-right: 1rem"
-                    >{{ tableData[selected].attempt }}</span
-                  ></a
-                >
+                  {{ tableData[selected].attempt }}
+                </div>
               </div>
             </nav>
 
@@ -101,22 +106,29 @@
                 v-model="selPoints"
               />
             </div>
-            <div class="container d-flex justify-content-around mb-1">
-              <button
-                type="button"
-                class="btn btn-secondary"
-                @click="selectPrev"
-              >
-                <span aria-hidden="true">&laquo;</span>
-              </button>
-              <button type="submit" class="btn btn-secondary">Submit</button>
-              <button
-                type="button"
-                class="btn btn-secondary"
-                @click="selectNext"
-              >
-                <span aria-hidden="true">&raquo;</span>
-              </button>
+            <div class="row">
+              <div class="col-md-6"></div>
+              <div class="col-md-6">
+                <div class="container d-flex justify-content-around mb-1">
+                  <button
+                    type="button"
+                    class="btn btn-secondary"
+                    @click="selectPrev"
+                  >
+                    <span aria-hidden="true">&laquo;</span>
+                  </button>
+                  <button type="submit" class="btn btn-secondary">
+                    Submit
+                  </button>
+                  <button
+                    type="button"
+                    class="btn btn-secondary"
+                    @click="selectNext"
+                  >
+                    <span aria-hidden="true">&raquo;</span>
+                  </button>
+                </div>
+              </div>
             </div>
             <div class="input-group mb-1">
               <input
