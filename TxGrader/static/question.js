@@ -43,6 +43,10 @@ var app = createApp({
             (ans) => ans.question_id == this.meta.question_id
           );
 
+          if (!submission_data.text) {
+            continue;
+          }
+
           let obj = {
             name,
             user_id,
