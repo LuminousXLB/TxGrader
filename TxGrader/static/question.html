@@ -58,28 +58,24 @@
                     <th
                       class="text-center"
                       scope="col"
-                      @click="sortKeys.unshift('user_id')"
+                      @click="sortBy('user_id')"
                     >
                       ID
                     </th>
-                    <th
-                      class="text-center"
-                      scope="col"
-                      @click="sortKeys.unshift('name')"
-                    >
+                    <th class="text-center" scope="col" @click="sortBy('name')">
                       Name
                     </th>
                     <th
                       class="text-center"
                       scope="col"
-                      @click="sortKeys.unshift('attempt')"
+                      @click="sortBy('attempt')"
                     >
                       Attempt
                     </th>
                     <th
                       class="text-center"
                       scope="col"
-                      @click="sortKeys.unshift('score')"
+                      @click="sortBy('score')"
                     >
                       Score
                     </th>

@@ -66,10 +66,11 @@ var app = createApp({
 
       res.sort((a, b) => {
         for (const key of this.sortKeys) {
-          if (a[key] == b[key]) {
-            continue;
-          } else {
-            return a[key] - b[key];
+          if (a[key] > b[key]) {
+            return 1;
+          }
+          if (a[key] < b[key]) {
+            return -1;
           }
         }
         return 0;
@@ -166,6 +167,11 @@ var app = createApp({
     },
     selectNext() {
       this.selected = Math.min(this.tableData.length - 1, this.selected + 1);
+    },
+    sortBy(key) {
+      if (this.sortKeys[0] !== key) {
+        this.sortKeys = [key, ...this.sortKeys.filter((k) => k !== key)];
+      }
     },
   },
   created() {
