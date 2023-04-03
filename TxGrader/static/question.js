@@ -30,6 +30,9 @@ var app = createApp({
         const user_id = stu.user.id;
 
         for (const history of stu.submission_history) {
+          if (stu.attempt != history.attempt) {
+            continue;
+          }
           const quiz_submission_id = history.id;
           const attempt = history.attempt;
 
@@ -158,10 +161,7 @@ var app = createApp({
       this.selected = Math.max(0, this.selected - 1);
     },
     selectNext() {
-      this.selected = Math.min(
-        this.tableData.length - 1,
-        this.selected + 1
-      );
+      this.selected = Math.min(this.tableData.length - 1, this.selected + 1);
     },
   },
   created() {
@@ -207,36 +207,36 @@ var app = createApp({
 }).mount("#app");
 
 document.addEventListener("keyup", (e) => {
-    if (e.key === "Enter") {
-      if (e.ctrlKey || (e.target.tagName === "TEXTAREA" && e.shiftKey)) {
-        app.SubmitForm();
-      }
-
-      if (e.shiftKey) {
-        app.selectNext();
-      }
+  if (e.key === "Enter") {
+    if (e.ctrlKey || (e.target.tagName === "TEXTAREA" && e.shiftKey)) {
+      app.SubmitForm();
     }
 
-    if (e.key === "Escape") {
-      app.messages = [];
+    if (e.shiftKey) {
+      app.selectNext();
     }
+  }
 
-    if (e.target.tagName === "TEXTAREA") {
-      return;
-    }
+  if (e.key === "Escape") {
+    app.messages = [];
+  }
 
-    switch (e.key) {
-      case "h":
-        app.selectFirst();
-        break;
-      case "j":
-        app.selectNext();
-        break;
-      case "k":
-        app.selectPrev();
-        break;
-      case "l":
-        app.selectLast();
-        break;
-    }
-  });
+  if (e.target.tagName === "TEXTAREA") {
+    return;
+  }
+
+  switch (e.key) {
+    case "h":
+      app.selectFirst();
+      break;
+    case "j":
+      app.selectNext();
+      break;
+    case "k":
+      app.selectPrev();
+      break;
+    case "l":
+      app.selectLast();
+      break;
+  }
+});
