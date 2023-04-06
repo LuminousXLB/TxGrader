@@ -18,7 +18,7 @@ var app = createApp({
       messages: [],
       messageTimers: [],
       question: {},
-      sortKeys: ["user_id", "attempt"],
+      sortKeys: ["name", "attempt"],
     };
   },
   computed: {
